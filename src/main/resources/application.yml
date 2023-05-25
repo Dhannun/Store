@@ -1,17 +1,18 @@
 server:
   port: 8090
+
   error:
-    include-message: always
-    include-binding-error: always
+    include-message: never
+    include-stacktrace: never
 
 spring:
 
   datasource:
     # Local test server Postgres
-    url: jdbc:postgresql://localhost:5432/foodlify_api
+    url: jdbc:mysql://localhost:3306/foodlify_api
     username: postgres
     password: password
-    driverClassName: org.postgresql.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -20,9 +21,9 @@ spring:
     showSql: true
     properties:
       hibernate:
-        format_sql: true
-    database: postgresql
-    databasePlatform: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+    database: mysql
+    databasePlatform: org.hibernate.dialect.MySQLDialect
 
 
 application:
@@ -32,3 +33,7 @@ application:
       expiration: 86400000 # One day
       refresh-token:
         expiration: 604800000 # 7 days
+logging:
+  level:
+    org:
+      hibernate: error

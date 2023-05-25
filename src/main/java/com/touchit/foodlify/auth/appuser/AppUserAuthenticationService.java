@@ -13,8 +13,8 @@ import com.touchit.foodlify.jwttoken.appuser.AppUserToken;
 import com.touchit.foodlify.jwttoken.appuser.AppUserTokenService;
 import com.touchit.foodlify.univrsal.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,7 +29,6 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Service
-@RequiredArgsConstructor
 @Log4j2
 @Transactional
 public class AppUserAuthenticationService {
@@ -39,6 +38,20 @@ public class AppUserAuthenticationService {
   private final AuthenticationManager authenticationManager;
   private final JwtService jwtService;
   private final AppUserTokenService appUserTokenService;
+
+  public AppUserAuthenticationService(
+          AppUserService appUserService,
+          AppUserConfirmationTokenService appUserConfirmationTokenService,
+          @Qualifier(value = "appUserAuthManager") AuthenticationManager authenticationManager,
+          JwtService jwtService,
+          AppUserTokenService appUserTokenService
+  ) {
+    this.appUserService = appUserService;
+    this.appUserConfirmationTokenService = appUserConfirmationTokenService;
+    this.authenticationManager = authenticationManager;
+    this.jwtService = jwtService;
+    this.appUserTokenService = appUserTokenService;
+  }
 
   public ResponseEntity<ApiResponse> register(
       PhoneNumberRegistrationRequest registrationRequest

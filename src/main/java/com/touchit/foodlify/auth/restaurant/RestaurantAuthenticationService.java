@@ -7,7 +7,6 @@ import com.touchit.foodlify.dto.request.RestaurantRegistrationRequest;
 import com.touchit.foodlify.dto.response.login.Login;
 import com.touchit.foodlify.exceptions.InvalidResourceException;
 import com.touchit.foodlify.exceptions.OperationFailedException;
-import com.touchit.foodlify.jwttoken.TokenType;
 import com.touchit.foodlify.jwttoken.restaurant.RestaurantToken;
 import com.touchit.foodlify.jwttoken.restaurant.RestaurantTokenService;
 import com.touchit.foodlify.otp.restaurant.RestaurantConfirmationToken;
@@ -15,21 +14,19 @@ import com.touchit.foodlify.otp.restaurant.RestaurantConfirmationTokenService;
 import com.touchit.foodlify.restaurant.Restaurant;
 import com.touchit.foodlify.restaurant.RestaurantService;
 import com.touchit.foodlify.univrsal.ApiResponse;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static com.touchit.foodlify.jwttoken.TokenType.BEARER;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @Service
-@AllArgsConstructor
 public class RestaurantAuthenticationService {
 
   private final RestaurantService restaurantService;
@@ -37,6 +34,19 @@ public class RestaurantAuthenticationService {
   private final AuthenticationManager authenticationManager;
   private final JwtService jwtService;
   private final RestaurantTokenService restaurantTokenService;
+
+  public RestaurantAuthenticationService(
+          RestaurantService restaurantService,
+          RestaurantConfirmationTokenService restaurantConfirmationTokenService,
+          @Qualifier(value = "restaurantUserAuthManager") AuthenticationManager authenticationManager,
+          JwtService jwtService, RestaurantTokenService restaurantTokenService
+  ) {
+    this.restaurantService = restaurantService;
+    this.restaurantConfirmationTokenService = restaurantConfirmationTokenService;
+    this.authenticationManager = authenticationManager;
+    this.jwtService = jwtService;
+    this.restaurantTokenService = restaurantTokenService;
+  }
 
 
   public ResponseEntity<ApiResponse> register(RestaurantRegistrationRequest registrationRequest) {

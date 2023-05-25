@@ -16,6 +16,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/** TODO: validate via the URI which repository to delete from */
 @Service
 @RequiredArgsConstructor
 public class LogoutService implements LogoutHandler {
@@ -48,7 +49,6 @@ public class LogoutService implements LogoutHandler {
             var responseBody = MessageResponse.successMessage("Logged our Successfully");
             try {
                 new ObjectMapper().writeValue(response.getOutputStream(), responseBody);
-                return;
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage());
             }

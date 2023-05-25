@@ -23,7 +23,6 @@ public class RestaurantService {
   private final RestaurantConfirmationTokenService restaurantConfirmationTokenService;
   private final PasswordEncoder passwordEncoder;
 
-
   public boolean register(RestaurantRegistrationRequest registrationRequest) {
     boolean restaurantExists = restaurantRepository.findByEmail(registrationRequest.getEmail()).isPresent();
 

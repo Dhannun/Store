@@ -5,7 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,13 +17,26 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/** TODO: validate via the URI which repository to loadUserByUsername and find by token */
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
+  private final UserDetailsService restaurantUserDetailsService;
   private final AppUserTokenRepository appUserTokenRepository;
+
+  public JwtAuthenticationFilter(
+          JwtService jwtService,
+          @Qualifier(value = "customAppUserService") UserDetailsService userDetailsService,
+          @Qualifier(value = "restaurantUserService") UserDetailsService restaurantUserDetailsService,
+          AppUserTokenRepository appUserTokenRepository
+  ) {
+    this.jwtService = jwtService;
+    this.userDetailsService = userDetailsService;
+    this.restaurantUserDetailsService = restaurantUserDetailsService;
+    this.appUserTokenRepository = appUserTokenRepository;
+  }
 
   @Override
   protected void doFilterInternal(
@@ -46,9 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
       var isTokenValid = appUserTokenRepository.findByToken(jwt)
-              .map(token ->
-                !token.isExpired() && !token.isRevoked()
-              ).orElse(false);
+              .map(token -> !token.isExpired() && !token.isRevoked()).orElse(false);
 
       if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -64,7 +75,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
       }
+      // End of If
     }
     filterChain.doFilter(request, response);
   }
+
+
+
 }

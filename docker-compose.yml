@@ -1,0 +1,12 @@
+services:
+  database:
+    container_name: foodlify_db
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: foodlify_api
+#    volumes:
+#      - ./db-data/:/var/lib/postgresql/data/

@@ -64,40 +64,32 @@ public class AppUserService {
   }
 
   public boolean register(EmailRegistrationRequest registrationRequest) {
-    boolean userExists = appUserRepository.findByEmail(registrationRequest.getEmail()).isPresent();
-
-    if (userExists){
+    if (appUserRepository.findByEmail(registrationRequest.getEmail()).isPresent()){
       return false;
-    }else {
-
-//      var appUser = AppUser.builder()
-//          .email(registrationRequest.getEmail())
-//          .password(passwordEncoder.encode(registrationRequest.getPassword()))
-//          .role(USER)
-//          .build();
-      AppUser appUser = new AppUser(
-          null,
-          registrationRequest.getEmail(),
-          null,
-          passwordEncoder.encode(registrationRequest.getPassword()),
-          USER,
-          false,
-          false
-          );
-
-      //TODO: sent OTP (SMS)
-//      String token = confirmationTokenService.generateToken();
-      final String token = "2802";
-
-      AppUserConfirmationToken appUserConfirmationToken = new AppUserConfirmationToken(
-          token,
-          LocalDateTime.now(),
-          LocalDateTime.now().plusMinutes(30),
-          appUser
-      );
-
-      return registerNewUser(appUser, appUserConfirmationToken);
     }
+
+    AppUser appUser = new AppUser(
+            null,
+            registrationRequest.getEmail(),
+            null,
+            passwordEncoder.encode(registrationRequest.getPassword()),
+            USER,
+            false,
+            false
+    );
+
+    //TODO: sent OTP (SMS)
+//      String token = confirmationTokenService.generateToken();
+    final String token = "2802";
+
+    AppUserConfirmationToken appUserConfirmationToken = new AppUserConfirmationToken(
+            token,
+            LocalDateTime.now(),
+            LocalDateTime.now().plusMinutes(30),
+            appUser
+    );
+
+    return registerNewUser(appUser, appUserConfirmationToken);
   }
 
   public void enableUserById(Long id) {

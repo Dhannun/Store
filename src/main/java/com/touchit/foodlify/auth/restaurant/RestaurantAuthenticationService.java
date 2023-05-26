@@ -90,7 +90,7 @@ public class RestaurantAuthenticationService {
 
   public ResponseEntity<ApiResponse> login(LoginRequest loginRequest) {
 
-    authenticationManager.authenticate(
+    var token = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             loginRequest.getUsername() + "_RESTAURANT",
             loginRequest.getPassword()
